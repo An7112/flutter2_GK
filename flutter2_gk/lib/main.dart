@@ -1,4 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter2_gk/model/PushNotification.dart';
 
 void main() {
   runApp(MyApp());
@@ -25,11 +28,46 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State {
   late int _totalNotifications;
-
+  PushNotification? _notificationInfo;
+  late final FirebaseMessaging _messaging;
   @override
   void initState() {
     _totalNotifications = 0;
     super.initState();
+  }
+
+  void registerNotification() async {
+    // 1. Initialize the Firebase app
+    await Firebase.initializeApp();
+
+    // 2. Instantiate Firebase Messaging
+    _messaging = FirebaseMessaging.instance;
+
+    // 3. On iOS, this helps to take the user permissions
+    NotificationSettings settings = await _messaging.requestPermission(
+      alert: true,
+      badge: true,
+      provisional: false,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        // Parse the message received
+        PushNotification notification = PushNotification(
+          title: message.notification?.title,
+          body: message.notification?.body,
+        );
+
+        setState(() {
+          _notificationInfo = notification;
+          _totalNotifications++;
+        });
+      });
+    } else {
+      print('User declined or has not accepted permission');
+    }
   }
 
   @override
