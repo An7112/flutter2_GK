@@ -85,6 +85,8 @@ class _HomePageState extends State {
         PushNotification notification = PushNotification(
           title: message.notification?.title,
           body: message.notification?.body,
+          dataTitle: message.data['title'],
+          dataBody: message.data['body'],
         );
 
         setState(() {
@@ -140,7 +142,7 @@ class _HomePageState extends State {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'TITLE: ${_notificationInfo!.title}',
+                      'TITLE: ${_notificationInfo!.dataTitle ?? _notificationInfo!.title}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16.0,
@@ -148,7 +150,7 @@ class _HomePageState extends State {
                     ),
                     SizedBox(height: 8.0),
                     Text(
-                      'BODY: ${_notificationInfo!.body}',
+                      'BODY: ${_notificationInfo!.dataBody ?? _notificationInfo!.body}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16.0,
